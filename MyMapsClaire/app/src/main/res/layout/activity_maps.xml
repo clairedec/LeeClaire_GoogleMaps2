@@ -1,70 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
 
+    <!--  This linear layout is for the View button -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Track" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Clear" />
-
-        <Button
-            android:id="@+id/button_view"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_weight="1"
-            android:onClick="changeView"
-            android:text="view"></Button>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="342dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/holo_blue_light"
         android:weightSum="1">
 
         <Button
-            android:id="@+id/button"
-            android:layout_width="172dp"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onSearch"
-            android:text="Search" />
+            android:text="View"
+            android:id="@+id/button_view"
+            android:layout_gravity="right"
+            android:onClick="changeView"
+            android:layout_weight="0.51" />
 
-        <EditText
-            android:id="@+id/editText_search"
-            android:layout_width="198dp"
-            android:layout_height="84dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textPersonName" />
+        <Button
+            android:id="@+id/button_Track"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="0.45"
+            android:onClick="trackMyLocation"
+            android:text="Track" />
+
+        <Button
+            android:id="@+id/button_Clear"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:onClick="clearMarkers"
+            android:text="Clear" />
 
     </LinearLayout>
 
+
+    <!--  This linear layout is for the Search  -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light"
+        android:weightSum="1">
+
+        <EditText
+            android:id="@+id/editText_search"
+            android:layout_width="146dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.97" />
+
+        <Button
+            android:id="@+id/button_search"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:onClick="onSearch"
+            android:text="Search"></Button>
+    </LinearLayout>
+
+
+    <!-- This is for the map -->
     <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="388dp"
+        android:layout_height="469dp"
+        tools:context=".MapsActivity" />
+</LinearLayout>
+
+    <!-- original xml code when project was created
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
-</LinearLayout>
+    -->

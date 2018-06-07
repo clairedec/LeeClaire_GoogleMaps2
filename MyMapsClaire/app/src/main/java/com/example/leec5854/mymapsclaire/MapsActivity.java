@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -84,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(seoul).title("born here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(seoul));
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+       /* if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED){
             Log.d("MyMapsApp", "Failed FINE permission check");
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 2);
@@ -100,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-        }//
+        }*/
 
 
 
@@ -242,12 +243,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationListener locationListenerGps = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
+            dropAmarker(LocationManager.GPS_PROVIDER);
 
+            if(gotMyLocationOneTime ==false){
+                locationManager.removeUpdates(this);
+                locationManager.removeUpdates(locationListenerGps);
+                gotMyLocationOneTime = true;
+            }else{
+                //if here then tracking so relaunch request for network
+                if(isNetworkEnabled){
+                    if(ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
+
+                }
+            }
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
+            //switch(i)
+            //case LocationProvider.AVAILABLE:
+            //printout log.d and, or toast message
+            //break;
+            switch(status){
+                case LocationProvider.AVAILABLE:
+                    Log.d("MyMapsApp", "location listener network: LocationProvider.AVAILABLE");
+                    break;
 
+                case LocationProvider.OUT_OF_SERVICE:
+                    Log.d("MyMapsApp", "location listener network: LocationProvider.OUT_OF_SERVICE");
+                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
+                    break;
+            }
         }
 
         @Override
@@ -259,11 +289,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onProviderDisabled(String provider) {
 
         }
-    }
+    };
 
 
     LocationListener locationListenerNetwork = new LocationListener() {
-    }{
+
         @Override
         public void onLocationChanged(Location location) {
             dropAmarker(LocationManager.NETWORK_PROVIDER);
@@ -294,7 +324,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //case LocationProvider.AVAILABLE:
             //printout log.d and, or toast message
                 //break;
+            switch(status){
+                case LocationProvider.AVAILABLE:
+                    Log.d("MyMapsApp", "location listener network: LocationProvider.AVAILABLE");
+                    break;
 
+                case LocationProvider.OUT_OF_SERVICE:
+                    Log.d("MyMapsApp", "location listener network: LocationProvider.OUT_OF_SERVICE");
+                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
+                    break;
+            }
         }
 
         @Override
@@ -310,18 +349,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void dropAmarker(String provider){
         if(locationManager != null){
-         /*   if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                return;
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                Log.d("MyMapsApp", "failed FINE permission check");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 2);
             }
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
 
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                return;
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                Log.d("MyMapsApp", "failed COARSE permission check");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
             }
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
-*/
+
 
             myLocation=locationManager.getLastKnownLocation(provider);
             LatLng userLocation = null;
