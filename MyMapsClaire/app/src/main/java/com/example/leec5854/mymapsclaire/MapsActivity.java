@@ -181,7 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 for(int i=0; i<addressList.size(); i++){
                     LatLng latLng = new LatLng(addressList.get(i).getLatitude(), addressList.get(i).getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(i + ":" + addressList.get(i).getSubThoroughfare() + " " + addressList.get(i).getAddressLine(i)));
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(addressList.get(i).getAddressLine(i)));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 }
             }
