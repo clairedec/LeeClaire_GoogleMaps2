@@ -114,16 +114,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Add View button and method (changeView) to switch between
     //satellite and map view
 
-    public void changeView(GoogleMap map){
-        mMap = map;
-        if(mMap.getMapType() == mMap.MAP_TYPE_NORMAL){
-            mMap.setMapType(mMap.MAP_TYPE_SATELLITE);
+    public void changeView(View view){
+        if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL){
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         }
-        else if(mMap.getMapType() == mMap.MAP_TYPE_SATELLITE){
-            mMap.setMapType(mMap.MAP_TYPE_NORMAL);
+        else if(mMap.getMapType() == GoogleMap.MAP_TYPE_SATELLITE){
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
         else{
-            mMap.setMapType(mMap.MAP_TYPE_NORMAL);
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
     }
 
@@ -149,12 +148,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if((myLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)) != null){
                     userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                     Log.d("MyMapsApp", "onSearch: using NETWORK_PROVIDER userLocation is: " + " " + myLocation.getLatitude() + " " +  myLocation.getLongitude());
-                    Toast.makeText(this, "Userloc: " + myLocation.getLatitude() + myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                 }else if ((myLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)) != null){
                     userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                     Log.d("MyMapsApp", "onSearch: using GPS_PROVIDER userLocation is: " + " " + myLocation.getLatitude() + " " +  myLocation.getLongitude());
-                    Toast.makeText(this, "Userloc: " + myLocation.getLatitude() + myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-
                 } else{
                     Log.d("MyMapsApp", "onSearch: myLocation is null");
 
@@ -165,7 +161,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if(!location.matches("")){
-            //Create Geocoder
             Geocoder geocoder = new Geocoder(this, Locale.US);
 
             try{
@@ -185,9 +180,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("MyMapsApp", "Address list size: " + addressList.size());
 
                 for(int i=0; i<addressList.size(); i++){
-                    Address address = addressList.get(i);
-                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(i + ":" + address.getSubThoroughfare()));
+                    LatLng latLng = new LatLng(addressList.get(i).getLatitude(), addressList.get(i).getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(i + ":" + addressList.get(i).getSubThoroughfare() + " " + addressList.get(i).getAddressLine(i)));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 }
             }
@@ -331,7 +325,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 case LocationProvider.OUT_OF_SERVICE:
                     Log.d("MyMapsApp", "location listener network: LocationProvider.OUT_OF_SERVICE");
-                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListenerNetwork);
                     break;
             }
         }
@@ -346,6 +339,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     };
+
+
 
     public void dropAmarker(String provider){
         if(locationManager != null){
@@ -388,19 +383,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //kick off the location tracker using getLocation to start the LocationListeners
         //if(notTrackingMyLocation) (getLocation(); notTrackingMyLocation=false;)
         //else {removeUpdates for both network and gps; notTrackingMyLocation=true)
-        getLocation();
         if(notTrackingMyLocation){
             getLocation();
             notTrackingMyLocation=false;
-        }else{
-            locationManager.removeUpdates(locationListenerNetwork);
+            Log.d("MyMapsApp", "tracking");
+        } else{
             locationManager.removeUpdates(locationListenerGps);
-            notTrackingMyLocation=true;
+            locationManager.removeUpdates(locationListenerNetwork);
+            Log.d("MyMapsApp", "not tracking");
+            notTrackingMyLocation=!notTrackingMyLocation;
         }
     }
 
 
-    public void clearMarkers(){
+    public void clearMarkers(View view){
         mMap.clear();
 
     }
